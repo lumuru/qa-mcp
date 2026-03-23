@@ -1,0 +1,19 @@
+{
+  "servers": {
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"]
+    },
+    "executeautomation-playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@executeautomation/playwright-mcp-server"]
+    },
+    "playwriter": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "playwriter@latest"]
+    }
+  }
+}
