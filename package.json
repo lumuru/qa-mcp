@@ -6,7 +6,12 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "playwright test",
+    "test:smoke": "playwright test smoke/",
+    "test:api": "playwright test api/",
+    "test:regression": "playwright test regression/",
+    "test:project": "playwright test --project",
+    "report": "playwright show-report results/html"
   },
   "keywords": [],
   "author": "",
