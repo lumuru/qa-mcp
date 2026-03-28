@@ -4,18 +4,28 @@ Centralized QA automation hub for AI-powered end-to-end testing across multiple 
 
 ## How It Works
 
-| Phase | MCP Server | What It Does |
-|-------|-----------|--------------|
-| **Explore** | [Playwriter](https://github.com/Playwriter-MCP/playwriter) | Browse real Chrome with active auth sessions to discover features |
-| **Generate** | [ExecuteAutomation](https://github.com/nickshanks347/executeautomation-playwright-mcp-server) | Convert natural-language descriptions into `.spec.ts` test files |
-| **Run** | [Microsoft Playwright](https://github.com/nickshanks347/mcp-playwright) | Execute tests headlessly for CI/CD |
+This toolkit uses a single MCP server — `@playwright/mcp` — to power two workflow modes:
+
+| Mode | Purpose | Output |
+|------|---------|--------|
+| **Explore** | Investigate a new app or feature interactively | Summary of testable areas, accessibility gaps, user flows |
+| **Generate** | Produce test files for known features | `.spec.ts` files ready to run |
+
+Both modes use the accessibility tree (not DOM selectors) for reliable element identification. See `prompts/locator-strategy.md` for the full selector rulebook.
 
 ## Project Structure
 
 ```
 qa-mcp/
 ├── playwright.config.ts          # Multi-project Playwright config
-├── .vscode/mcp.json              # MCP server definitions
+├── .vscode/mcp.json              # Playwright MCP server config
+├── .claude/commands/              # Claude Code slash commands
+│   ├── explore.md                 # /explore <url>
+│   └── generate.md                # /generate <project> <category> <url>
+├── prompts/                       # Prompt templates (works with any editor)
+│   ├── locator-strategy.md
+│   ├── explore-instructions.md
+│   └── generate-instructions.md
 ├── projects/
 │   └── sample-project/           # One folder per app under test
 │       ├── smoke/                # Quick sanity checks
@@ -74,6 +84,48 @@ npm run test:regression               # Regression tests only
 npm test -- --project=sample-project  # Specific project
 npm run report                        # Open HTML report
 ```
+
+## Usage
+
+### Claude Code (recommended for individual use)
+
+If you have Claude Code installed, use the built-in slash commands:
+
+```bash
+# Explore a page — discover what's testable
+/explore https://staging.myapp.com/dashboard
+
+# Generate smoke tests for a project
+/generate my-project smoke https://staging.myapp.com/dashboard
+
+# Generate regression tests
+/generate my-project regression https://staging.myapp.com/checkout
+```
+
+### VS Code, Cursor, Cline, or other MCP-compatible editors
+
+1. **Connect the MCP server.** The config is already in `.vscode/mcp.json`. For other editors, add:
+   ```json
+   {
+     "command": "npx",
+     "args": ["-y", "@playwright/mcp@latest"]
+   }
+   ```
+
+2. **Open the relevant prompt template** from `prompts/`:
+   - `prompts/explore-instructions.md` — for exploration
+   - `prompts/generate-instructions.md` — for test generation
+   - `prompts/locator-strategy.md` — selector rules (referenced by both)
+
+3. **Paste the prompt** into your AI chat, replacing `{{URL}}`, `{{PROJECT}}`, and `{{CATEGORY}}` with your values.
+
+### Prompt Templates
+
+| File | Purpose |
+|------|---------|
+| `prompts/explore-instructions.md` | How to explore an app and report findings |
+| `prompts/generate-instructions.md` | How to generate `.spec.ts` files following project conventions |
+| `prompts/locator-strategy.md` | Selector priority rules — shared by both modes |
 
 ## Shared Utilities
 
