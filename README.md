@@ -1,6 +1,6 @@
 # QA MCP Toolkit
 
-Centralized QA automation hub for AI-powered end-to-end testing across multiple web projects. Uses [Playwright](https://playwright.dev/) and three MCP (Model Context Protocol) servers to create a complete explore → generate → run pipeline.
+Centralized QA automation hub for AI-powered end-to-end testing across multiple web projects. Uses [Playwright](https://playwright.dev/) and a single MCP server ([`@playwright/mcp`](https://www.npmjs.com/package/@playwright/mcp)) to power explore and generate workflows.
 
 ## How It Works
 
@@ -171,7 +171,7 @@ const user = createTestUser();          // { email, username, password }
 
 - **TypeScript** — strict mode with `@shared/*` path aliases
 - **Playwright Test** — browser automation and test runner
-- **MCP Servers** — AI-assisted exploration, generation, and execution
+- **MCP Server** — `@playwright/mcp` for AI-assisted exploration and test generation
 
 ## License
 

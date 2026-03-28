@@ -1,5 +1,7 @@
 Use the @playwright/mcp browser tools to generate Playwright test files for a web application.
 
+**Before starting:** Read the files `prompts/generate-instructions.md` and `prompts/locator-strategy.md` and follow their full instructions.
+
 Arguments: $ARGUMENTS
 
 Parse the arguments as: `<project> <category> <url>`

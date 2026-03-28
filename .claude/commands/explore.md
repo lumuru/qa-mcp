@@ -2,6 +2,8 @@ Use the @playwright/mcp browser tools to explore a web application and identify 
 
 Target URL: $ARGUMENTS
 
+**Before starting:** Read the files `prompts/explore-instructions.md` and `prompts/locator-strategy.md` and follow their full instructions.
+
 ## Instructions
 
 Follow the exploration process from `prompts/explore-instructions.md`:
