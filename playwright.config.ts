@@ -12,6 +12,13 @@ export default defineConfig({
         baseURL: process.env.BASE_URL || 'https://example.com',
       },
     },
+    {
+      name: 'qa-task-tracker',
+      testDir: './projects/qa-task-tracker',
+      use: {
+        baseURL: process.env.BASE_URL || 'http://localhost:3001',
+      },
+    },
   ],
   reporter: [
     ['html', { outputFolder: 'results/html', open: 'never' }],
