@@ -28,9 +28,13 @@ auth.json
 credentials.json
 secrets.json
 
-# Project-specific test suites (may contain internal URLs, selectors, fixtures)
+# Project-specific test suites (company property — internal URLs, selectors, fixtures)
+# Block everything under projects/ by default, explicitly allow the public demo project.
 projects/*
 !projects/.gitkeep
+!projects/sample-project/
+projects/sample-project/**/node_modules/
+projects/sample-project/**/test-results/
 
 # Logs
 *.log
