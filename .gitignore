@@ -1,8 +1,48 @@
+# Dependencies
 node_modules/
+
+# Build output
 dist/
-results/
-playwright-report/
+*.tsbuildinfo
+
+# Playwright
 test-results/
-.env*
+playwright-report/
+playwright/.cache/
+blob-report/
+.playwright-mcp/
+results/
+
+# Test artifacts (traces, videos, screenshots, auth state)
+*.webm
+*.zip
+storageState.json
+auth.json
+
+# Environment / secrets
+.env
+.env.*
 !.env.example
+*.pem
+*.key
+credentials.json
+secrets.json
+
+# Project-specific test suites (may contain internal URLs, selectors, fixtures)
+projects/*
+!projects/.gitkeep
+
+# Logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+*.swp
+*.swo
