@@ -1,0 +1,14 @@
+# Pre-commit pattern list (EXAMPLE — commit this; do NOT put real patterns here).
+#
+# Copy this file to `.githooks/patterns.local` (gitignored) and add one
+# extended-regex pattern per line. Lines starting with # and blank lines
+# are ignored. Patterns are matched case-insensitively against added lines
+# in staged diffs.
+#
+# The pre-commit hook reads ONLY `.githooks/patterns.local`. If it does
+# not exist, no content scanning is performed.
+
+# Example format (replace with your organisation's sensitive patterns):
+# internal\.example\.com
+# corp-staging\.example\.net
+# AKIA[0-9A-Z]{16}

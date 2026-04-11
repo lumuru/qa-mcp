@@ -64,16 +64,20 @@ Single server: `@playwright/mcp` (configured in `.vscode/mcp.json`). Uses snapsh
 
 ## First-Time Setup
 
-After cloning, enable the pre-commit hook that scans for sensitive strings:
+After cloning, enable the pre-commit hook and provide your local pattern list:
 
 ```bash
 git config core.hooksPath .githooks
+cp .githooks/patterns.example .githooks/patterns.local
+# Edit .githooks/patterns.local and add one regex per line for strings
+# you never want committed (internal URLs, credentials, API keys, etc.)
 ```
 
-The hook at `.githooks/pre-commit` blocks commits that add internal URLs,
-credentials, or other sensitive patterns. `.gitignore` blocks by filename;
-the hook blocks by content. Update `.githooks/pre-commit` if new sensitive
-patterns need to be added.
+The hook at `.githooks/pre-commit` reads `.githooks/patterns.local` (which
+is gitignored) and blocks commits that add any matching content.
+`.gitignore` additionally blocks some filename shapes. Neither the hook
+nor the repo contain the real sensitive strings — only your local
+`patterns.local` does.
 
 ## Test Suites Are Private
 

@@ -1,35 +1,42 @@
 #!/usr/bin/env bash
-# Pre-commit hook: block staged content that contains internal company URLs,
-# credentials, or other sensitive strings.
+# Pre-commit hook: block staged content that matches patterns defined in
+# .githooks/patterns.local (not tracked in git). See .githooks/patterns.example
+# for the expected file format.
 #
 # Install once per clone:
 #   git config core.hooksPath .githooks
 #
-# Patterns to block (extended regex, case-insensitive). Add to this list as
-# new sensitive domains or secrets are identified.
+# If .githooks/patterns.local does not exist, content scanning is skipped
+# silently (the hook does not block the commit).
 
 set -euo pipefail
 
-SENSITIVE_PATTERNS=(
-  'REDACTED'
-  'bsc-qas\.tgi'
-  'sdm-qas\.tgi'
-  'user@example'
-  'REDACTED'
-  'REDACTED'
-)
+REPO_ROOT=$(git rev-parse --show-toplevel)
+PATTERN_FILE="${REPO_ROOT}/.githooks/patterns.local"
 
-# Files exempt from scanning. These legitimately contain the patterns
-# (the hook itself, the gitignore filename rules, and this project's
-# security docs) and must not trigger themselves.
+if [[ ! -f "${PATTERN_FILE}" ]]; then
+  exit 0
+fi
+
+# Load patterns: strip blank lines and comments.
+PATTERNS=()
+while IFS= read -r line || [[ -n "${line}" ]]; do
+  [[ -z "${line}" || "${line}" =~ ^[[:space:]]*# ]] && continue
+  PATTERNS+=("${line}")
+done < "${PATTERN_FILE}"
+
+if [[ ${#PATTERNS[@]} -eq 0 ]]; then
+  exit 0
+fi
+
+JOINED=$(IFS='|'; echo "${PATTERNS[*]}")
+
+# Files exempt from scanning — patterns.local itself legitimately contains
+# the strings we're guarding against.
 EXCLUDE_FILES=(
-  '.githooks/pre-commit'
-  '.gitignore'
+  '.githooks/patterns.local'
 )
 
-JOINED=$(IFS='|'; echo "${SENSITIVE_PATTERNS[*]}")
-
-# List of staged added/modified files.
 STAGED_FILES=$(git diff --cached --name-only --diff-filter=AM)
 
 if [[ -z "${STAGED_FILES}" ]]; then
@@ -41,7 +48,6 @@ VIOLATIONS=""
 while IFS= read -r file; do
   [[ -z "${file}" ]] && continue
 
-  # Skip exempt files.
   skip=false
   for excl in "${EXCLUDE_FILES[@]}"; do
     if [[ "${file}" == "${excl}" ]]; then
@@ -51,7 +57,6 @@ while IFS= read -r file; do
   done
   [[ "${skip}" == true ]] && continue
 
-  # Inspect only added lines (start with +, exclude the +++ header).
   file_diff=$(git diff --cached -U0 --diff-filter=AM -- "${file}")
   hits=$(printf '%s\n' "${file_diff}" \
     | grep -E '^\+' \
@@ -68,13 +73,11 @@ done <<< "${STAGED_FILES}"
 if [[ -n "${VIOLATIONS}" ]]; then
   echo ""
   echo "BLOCKED: staged changes contain sensitive patterns."
-  echo "The pre-commit hook at .githooks/pre-commit found the following:"
+  echo "Defined in: ${PATTERN_FILE}"
   echo ""
   printf '%s' "${VIOLATIONS}" | sed 's/^/  /'
   echo ""
   echo "Remove or replace the offending content before committing."
-  echo "If this is a false positive, edit .githooks/pre-commit EXCLUDE_FILES"
-  echo "or adjust the SENSITIVE_PATTERNS list."
   exit 1
 fi
 

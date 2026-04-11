@@ -51,11 +51,11 @@ Thumbs.db
 *.swp
 *.swo
 
-# Company-property filename patterns (docs, artifacts referencing internal systems)
-# The pre-commit hook in .githooks/pre-commit additionally scans file CONTENTS
-# for internal URLs; .gitignore here only blocks by filename.
+# Pre-commit hook local pattern file (contains real sensitive strings)
+.githooks/patterns.local
+
+# Company-property filename markers (docs/artifacts referencing internal systems).
+# Content scanning is handled by the pre-commit hook reading patterns from
+# .githooks/patterns.local; this section only blocks common filename shapes.
 *BSC-*
 *SDM-*
-*bsc-qas*
-*sdm-qas*
-*REDACTED.example*
