@@ -19,6 +19,20 @@ export default defineConfig({
         baseURL: process.env.BASE_URL || 'http://localhost:3001',
       },
     },
+    {
+      name: 'bsc-qas',
+      testDir: './projects/bsc-qas',
+      use: {
+        baseURL: process.env.BASE_URL || 'https://REDACTED.example',
+      },
+    },
+    {
+      name: 'sdm-qas',
+      testDir: './projects/sdm-qas',
+      use: {
+        baseURL: process.env.BASE_URL || 'https://REDACTED.example',
+      },
+    },
   ],
   reporter: [
     ['html', { outputFolder: 'results/html', open: 'never' }],
