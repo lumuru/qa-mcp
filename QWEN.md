@@ -271,9 +271,6 @@ Defined in `playwright.config.ts`:
 
 Current projects:
 - `sample-project` — `https://example.com`
-- `qa-task-tracker` — `http://localhost:3001`
-- `bsc-qas` — `https://REDACTED.example`
-- `sdm-qas` — `https://REDACTED.example`
 
 ## When Writing Tests — Rules
 
