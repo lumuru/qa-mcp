@@ -62,6 +62,26 @@ npm run report                        # Open HTML report
 
 Single server: `@playwright/mcp` (configured in `.vscode/mcp.json`). Uses snapshot mode (accessibility tree) by default. Supports headed + headless modes.
 
+## First-Time Setup
+
+After cloning, enable the pre-commit hook that scans for sensitive strings:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+The hook at `.githooks/pre-commit` blocks commits that add internal URLs,
+credentials, or other sensitive patterns. `.gitignore` blocks by filename;
+the hook blocks by content. Update `.githooks/pre-commit` if new sensitive
+patterns need to be added.
+
+## Test Suites Are Private
+
+Everything under `projects/` is treated as company property and is excluded
+from version control by `.gitignore`. Only `projects/sample-project/` and
+`projects/.gitkeep` are tracked. When you scaffold a new project, do NOT
+commit its files — they are for local use only.
+
 ## When Writing Tests
 
 - Every test needs at least one `expect()` assertion

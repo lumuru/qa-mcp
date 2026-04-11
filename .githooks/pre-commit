@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+# Pre-commit hook: block staged content that contains internal company URLs,
+# credentials, or other sensitive strings.
+#
+# Install once per clone:
+#   git config core.hooksPath .githooks
+#
+# Patterns to block (extended regex, case-insensitive). Add to this list as
+# new sensitive domains or secrets are identified.
+
+set -euo pipefail
+
+SENSITIVE_PATTERNS=(
+  'REDACTED'
+  'bsc-qas\.tgi'
+  'sdm-qas\.tgi'
+  'user@example'
+  'REDACTED'
+  'REDACTED'
+)
+
+# Files exempt from scanning. These legitimately contain the patterns
+# (the hook itself, the gitignore filename rules, and this project's
+# security docs) and must not trigger themselves.
+EXCLUDE_FILES=(
+  '.githooks/pre-commit'
+  '.gitignore'
+)
+
+JOINED=$(IFS='|'; echo "${SENSITIVE_PATTERNS[*]}")
+
+# List of staged added/modified files.
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=AM)
+
+if [[ -z "${STAGED_FILES}" ]]; then
+  exit 0
+fi
+
+VIOLATIONS=""
+
+while IFS= read -r file; do
+  [[ -z "${file}" ]] && continue
+
+  # Skip exempt files.
+  skip=false
+  for excl in "${EXCLUDE_FILES[@]}"; do
+    if [[ "${file}" == "${excl}" ]]; then
+      skip=true
+      break
+    fi
+  done
+  [[ "${skip}" == true ]] && continue
+
+  # Inspect only added lines (start with +, exclude the +++ header).
+  file_diff=$(git diff --cached -U0 --diff-filter=AM -- "${file}")
+  hits=$(printf '%s\n' "${file_diff}" \
+    | grep -E '^\+' \
+    | grep -Ev '^\+\+\+ ' \
+    | grep -iE "${JOINED}" || true)
+
+  if [[ -n "${hits}" ]]; then
+    VIOLATIONS+="--- ${file} ---"$'\n'
+    VIOLATIONS+="${hits}"$'\n'
+    VIOLATIONS+=$'\n'
+  fi
+done <<< "${STAGED_FILES}"
+
+if [[ -n "${VIOLATIONS}" ]]; then
+  echo ""
+  echo "BLOCKED: staged changes contain sensitive patterns."
+  echo "The pre-commit hook at .githooks/pre-commit found the following:"
+  echo ""
+  printf '%s' "${VIOLATIONS}" | sed 's/^/  /'
+  echo ""
+  echo "Remove or replace the offending content before committing."
+  echo "If this is a false positive, edit .githooks/pre-commit EXCLUDE_FILES"
+  echo "or adjust the SENSITIVE_PATTERNS list."
+  exit 1
+fi
+
+exit 0

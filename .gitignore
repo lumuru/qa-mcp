@@ -50,3 +50,12 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# Company-property filename patterns (docs, artifacts referencing internal systems)
+# The pre-commit hook in .githooks/pre-commit additionally scans file CONTENTS
+# for internal URLs; .gitignore here only blocks by filename.
+*BSC-*
+*SDM-*
+*bsc-qas*
+*sdm-qas*
+*REDACTED.example*
